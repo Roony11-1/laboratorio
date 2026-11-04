@@ -1,6 +1,9 @@
 package io.github.roont11_1.query_analytics.infrastructure.messaging.producer;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import io.github.roont11_1.query_analytics.core.domain.events.QueryEvent;
@@ -16,8 +19,8 @@ public class QueryProducer
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void publish(QueryEvent event)
+    public CompletableFuture<SendResult<String, QueryEvent>> publish(QueryEvent event)
     {
-        kafkaTemplate.send(TOPIC, event.term(), event);
+        return kafkaTemplate.send(TOPIC, event.getTerm(), event);
     }
 }

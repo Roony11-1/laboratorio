@@ -2,7 +2,9 @@ package io.github.roont11_1.query_analytics.core.service;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
 import io.github.roont11_1.query_analytics.api.dto.QueryRequest;
@@ -19,22 +21,22 @@ public class QueryService
         this.queryProducer = queryProducer;
     }
 
-    public void query(QueryRequest request)
+    public CompletableFuture<SendResult<String, QueryEvent>> query(QueryRequest request)
     {
         var start = System.nanoTime();
-
-        // Aquí irá la lógica de procesamiento de la consulta.
-
-        var durationMs = (System.nanoTime() - start) / 1_000_000;
 
         var event = new QueryEvent(
             UUID.randomUUID(),
             request.term(),
             request.category(),
-            durationMs,
+            null,
             Instant.now()
         );
 
-        queryProducer.publish(event);
+        var durationMs = (System.nanoTime() - start) / 1_000_000;
+
+        event.setDurationMs(durationMs);
+
+        return queryProducer.publish(event);
     }
 }

@@ -1,5 +1,7 @@
 package io.github.roont11_1.query_analytics.api.controller;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,10 +24,9 @@ public class QueryController
     }
 
     @PostMapping
-    public ResponseEntity<Void> query(@RequestBody QueryRequest request)
+    public CompletableFuture<ResponseEntity<Void>> query(@RequestBody QueryRequest request)
     {
-        queryService.query(request);
-
-        return ResponseEntity.accepted().build();
+        return queryService.query(request)
+            .thenApply(result -> ResponseEntity.accepted().build());
     }
 }

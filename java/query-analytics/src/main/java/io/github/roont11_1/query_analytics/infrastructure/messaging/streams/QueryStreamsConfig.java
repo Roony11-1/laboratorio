@@ -28,10 +28,10 @@ public class QueryStreamsConfig
             Consumed.with(Serdes.String(), eventSerde)
         )
         .filter((key, event) ->
-            event.term() != null && !event.term().isBlank()
+            event.getTerm() != null && !event.getTerm().isBlank()
         )
         .groupBy(
-            (key, event) -> event.category(),
+            (key, event) -> event.getCategory(),
             Grouped.with(Serdes.String(), eventSerde)
         )
         .count(Materialized.as("query-count-by-category"));
